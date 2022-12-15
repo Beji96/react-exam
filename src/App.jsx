@@ -1,34 +1,60 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import "./App.css";
+import { nanoid } from "nanoid";
+import { useState, useRef } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  //crreate useRef
+  const animalRef = useRef();
+  //create useState
+  const [animal, setAnimal] = useState({
+    id: nanoid(),
+    type: "",
+    journeyNo: 0,
+    isHere: true,
+  });
+  //create handlesubmit function
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newAnimalRef = animalRef.current.value;
+    setAnimal({ ...animal, type: newAnimalRef });
 
+    animalRef.current.value = "";
+  };
+  //create handleJourney function
+  const handleJourney = () => {
+    setAnimal((animal) => {
+      if (animal.isHere) {
+        return {
+          ...animal,
+          isHere: !animal.isHere,
+          journeyNo: animal.journeyNo + 1,
+        };
+      } else {
+        return { ...animal, isHere: !animal.isHere };
+      }
+    });
+  };
   return (
     <div className="App">
+      <h1>Flavius Exam</h1>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+        <p>Animal type:{animal.type} </p>
+        <p>Number of Journey: {animal.journeyNo} </p>
         <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
+          {animal.isHere
+            ? "Animal is in the forest"
+            : "Animal is not in teh forest"}
         </p>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <form onSubmit={(e) => handleSubmit(e)}>
+        <input type="text" ref={animalRef} />
+        <button type="submit">Animal Type</button>
+      </form>
+      <button onClick={handleJourney}>
+        {animal.isHere ? "Go on a Journey" : "Return from the journey"}
+      </button>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
